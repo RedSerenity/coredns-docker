@@ -1,12 +1,14 @@
 ARG ALPINE_VERSION=3.12
-ARG COREDNS_VERSION=1.8.3
 ARG GO_VERSION=1.16.3
+ARG COREDNS_VERSION=1.8.3
 
 FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS Builder
+ARG COREDNS_VERSION
 
 WORKDIR /src
 RUN apk add --no-cache git make && \
-		git clone https://github.com/coredns/coredns.git .
+		git clone https://github.com/coredns/coredns.git . && \
+		git checkout v${COREDNS_VERSION}
 
 COPY plugin.cfg plugin.cfg
 
@@ -20,7 +22,9 @@ RUN go get \
 RUN make && ./coredns -version
 
 
+
 FROM alpine:${ALPINE_VERSION}
+ARG COREDNS_VERSION
 
 LABEL org.opencontainers.image.authors="Tyler Andersen <tyler@redserenity.com>"
 LABEL org.opencontainers.image.version="${COREDNS_VERSION}"
