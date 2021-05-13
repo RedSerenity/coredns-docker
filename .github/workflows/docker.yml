@@ -7,6 +7,11 @@ on:
     tags:
       - 'v*.*.*'
 
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_REPO }}
+  DOCKERHUB_IMAGE: ${{ secrets.DOCKERHUB_REPO }}/coredns
+
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -14,25 +19,63 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Information
-        run: |
-          echo "DockerHub Username: ${{ secrets.DOCKERHUB_USERNAME }}"
-          echo "DockerHub Repository: ${{ secrets.DOCKERHUB_REPO }}"
-
       - name: Docker Meta
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ${{ secrets.DOCKERHUB_REPO }}/coredns
+          images: ${{ env.DOCKERHUB_IMAGE }}
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
+            type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
             type=sha
 
-      - name: Docker Tags and Labels
+      - name: Docker Info, Tags, & Labels
         run: |
-          echo "Docker Tags: ${{ steps.meta.outputs.tags }}"
-          echo "Docker Labels: ${{ steps.meta.outputs.labels }}"
+          echo "DockerHub Username: ${{ env.DOCKERHUB_USERNAME }}"
+          echo "DockerHub Repository: ${{ env.DOCKERHUB_REPO }}"
+          echo "Docker Image Tags: ${{ steps.meta.outputs.tags }}"
+          echo "Docker Image Labels: ${{ steps.meta.outputs.labels }}"
 
+      - name: Setup Docker BuildX
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker Layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push to DockerHub
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+          #push: ${{ github.event_name != 'pull_request' }}
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Inspect Image
+        run: |
+          docker image inspect ${{ env.DOCKERHUB_REPO }}:${{ steps.meta.outputs.version }}
+
+      - name: Check Manifest
+        run: |
+          docker buildx imagetools inspect ${{ env.DOCKERHUB_REPO }}:${{ steps.meta.outputs.version }}
+
+      - name: Dump Context
+        uses: crazy-max/ghaction-dump-context@v1

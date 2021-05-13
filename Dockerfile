@@ -26,6 +26,7 @@ RUN make && ./coredns -version
 FROM alpine:${ALPINE_VERSION}
 ARG COREDNS_VERSION
 
+LABEL org.opencontainers.image.title="CoreDNS+"
 LABEL org.opencontainers.image.authors="Tyler Andersen <tyler@redserenity.com>"
 LABEL org.opencontainers.image.version="${COREDNS_VERSION}"
 LABEL coredns_external_plugins="pdsql, redis, redis_cache, netbox, alternate, mdns, dump"
