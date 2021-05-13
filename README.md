@@ -7,9 +7,11 @@
 ![Docker Stars](https://img.shields.io/docker/stars/redserenity/coredns?style=for-the-badge)
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/redserenity/coredns?sort=date&style=for-the-badge)
 
+_Note: Versioning will follow the main CoreDNS releases._
+
 This repo contains a Dockerfile to custom build CoreDNS with certain plugins, namely `pdsql, redis, redis_cache, netbox, alternate, mdns, dump` and using _Alpine Linux_ as the base container.
 
-[Dockerhub Repository](https://hub.docker.com/u/redserenity/coredns)
+[Dockerhub Repository](https://hub.docker.com/r/redserenity/coredns)
 
 <br/>
 

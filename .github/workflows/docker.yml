@@ -2,8 +2,6 @@ name: DockerBuildPush
 
 on:
   push:
-    branches:
-      - 'master'
     tags:
       - 'v*.*.*'
 
@@ -67,14 +65,3 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Inspect Image
-        run: |
-          docker image inspect ${{ env.DOCKERHUB_IMAGE }}:${{ steps.meta.outputs.version }}
-
-      - name: Check Manifest
-        run: |
-          docker buildx imagetools inspect ${{ env.DOCKERHUB_IMAGE }}:${{ steps.meta.outputs.version }}
-
-      - name: Dump Context
-        uses: crazy-max/ghaction-dump-context@v1
