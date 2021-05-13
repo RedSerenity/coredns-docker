@@ -1,4 +1,4 @@
-ARG ALPINE_VERSION=3.12
+ARG ALPINE_VERSION=3.12.7
 ARG GO_VERSION=1.16.3
 ARG COREDNS_VERSION=1.8.3
 
@@ -20,7 +20,6 @@ RUN go get \
 		go mod tidy
 
 RUN make && ./coredns -version
-
 
 
 FROM alpine:${ALPINE_VERSION}
