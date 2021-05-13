@@ -14,11 +14,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Information
+        run: |
+          echo "DockerHub Username: ${{ secrets.DOCKERHUB_USERNAME }}"
+          echo "DockerHub Repository: ${{ secrets.DOCKERHUB_REPO }}"
+
       - name: Docker Meta
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ${{ env.DOCKER_IMAGE }}
+          images: ${{ secrets.DOCKERHUB_REPO }}/coredns
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -30,3 +35,4 @@ jobs:
         run: |
           echo "Docker Tags: ${{ steps.meta.outputs.tags }}"
           echo "Docker Labels: ${{ steps.meta.outputs.labels }}"
+
