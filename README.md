@@ -3,7 +3,7 @@
 ---
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/RedSerenity/coredns-docker?label=Version&style=for-the-badge)
-![GitHub Workflow Status (event)](https://img.shields.io/github/workflow/status/RedSerenity/coredns-docker/DockerBuildPush?event=push&label=Docker%20Build&style=for-the-badge)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/RedSerenity/coredns-docker/DockerBuildPush?label=Docker%20Build&style=for-the-badge)
 ![Docker Stars](https://img.shields.io/docker/stars/redserenity/coredns?style=for-the-badge)
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/redserenity/coredns?sort=date&style=for-the-badge)
 
