@@ -70,11 +70,11 @@ jobs:
 
       - name: Inspect Image
         run: |
-          docker image inspect ${{ env.DOCKERHUB_REPO }}:${{ steps.meta.outputs.version }}
+          docker image inspect ${{ env.DOCKERHUB_IMAGE }}:${{ steps.meta.outputs.version }}
 
       - name: Check Manifest
         run: |
-          docker buildx imagetools inspect ${{ env.DOCKERHUB_REPO }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ${{ env.DOCKERHUB_IMAGE }}:${{ steps.meta.outputs.version }}
 
       - name: Dump Context
         uses: crazy-max/ghaction-dump-context@v1
